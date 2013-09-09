@@ -1,0 +1,64 @@
+<?php
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function imagex_bean_entity_info_alter(&$entity_info) {
+  if (isset($entity_info['bean'])) {
+    $entity_info['bean']['entity class'] = 'ImagexBean';
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function imagex_bean_module_implements_alter(&$implementations, $hook) {
+  switch ($hook) {
+    case 'entity_info_alter':
+      // Ensure that imagex_bean_entity_info_alter() is the last hook invoked.
+      if (isset($implementations['imagex_bean'])) {
+        unset($implementations['imagex_bean']);
+        $implementations['imagex_bean'] = FALSE;
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function imagex_bean_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    case 'bean_form':
+      // Check for allowance of seeing the view modes.
+      if ($when = imagex_bean_bean_form_hide_viewmode()) {
+        if (!is_string($when) || !user_access($when)) {
+         $view_mode = $form['view_mode'];
+          $form['view_mode'] = array(
+            '#type' => 'hidden',
+            '#value' => $view_mode['#default_value']
+          );
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Determines whether or not the bean form's `viewmode` field is displayed.
+ *
+ * Provides the capabilities to return both a boolean value that can be used to
+ * simply indicate whether or not the viewmode field should be displayed.
+ * Additionally, a string value can be returned containing user permissions
+ * string to test the current user's assigned perms to determine whether or
+ * not the viewmode field should be displayed.
+ *
+ * @return mixed
+ *   Returns a boolean value or a string used to determine if viewmode is hidden.
+ */
+function imagex_bean_bean_form_hide_viewmode() {
+  return 'administer beans';
+}
