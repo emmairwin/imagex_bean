@@ -1,6 +1,6 @@
 name = ImageX Bean
-description = ImageX bean accelerator module that assists in enhacing the capabilities of the Bean and Bean UI modules.
-package = ImageX
+description = This component assists in enhanching the capabilities of the Bean and Bean UI modules.
+package = ImageX 
 version = 7.x-dev
 core = 7.x
 
